@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Taller</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #061d85;
+            --secondary: #05156e;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --owner: #9c27b0;
+            --house: #ff9800;
+            --workshop: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a1a5e, #061d85, #0a1a5e);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        option {
+            color: black;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--success);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .reset-btn {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .reset-btn:hover {
+            background: #d81b60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+        
+        .card.owner::before {
+            background: linear-gradient(90deg, var(--owner), #d500f9);
+        }
+        
+        .card.house::before {
+            background: linear-gradient(90deg, var(--house), #ff6d00);
+        }
+        
+        .card.workshop::before {
+            background: linear-gradient(90deg, var(--workshop), #00e676);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .card.owner .card-title {
+            color: #e1bee7;
+        }
+        
+        .card.house .card-title {
+            color: #ffe0b2;
+        }
+        
+        .card.workshop .card-title {
+            color: #c8e6c9;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .card-icon.ingresos {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+        
+        .card-icon.retiros {
+            background: rgba(230, 57, 70, 0.2);
+            color: var(--danger);
+        }
+        
+        .card-icon.inversion {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--warning);
+        }
+        
+        .card-icon.fondo {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+        }
+        
+        .card-icon.owner {
+            background: rgba(156, 39, 176, 0.2);
+            color: var(--owner);
+        }
+        
+        .card-icon.house {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--house);
+        }
+        
+        .card-icon.workshop {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--workshop);
+        }
+        
+        .card-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .card.owner .card-value {
+            color: #ea80fc;
+        }
+        
+        .card.house .card-value {
+            color: #ffb74d;
+        }
+        
+        .card.workshop .card-value {
+            color: #81c784;
+        }
+        
+        .card-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .today-date {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--info);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            color: var(--light);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.07);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--info);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-submit {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            background: #3ab0d5;
+            transform: translateY(-2px);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: var(--success);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(200%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <h1>Tele-Like - Dashboard</h1>
+            </div>
+            <button class="reset-btn" id="resetBtn">
+                <i class="fas fa-redo"></i> Reiniciar Todo
+            </button>
+        </header>
+        
+        <div class="today-date">
+            <i class="fas fa-calendar-day"></i> Hoy es <span id="currentDate"></span>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Hoy</div>
+                    <div class="card-icon ingresos">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="totalIngresos">$0.00</div>
+                <div class="card-desc">Suma de todos los ingresos del día</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Hoy (Retiros)</div>
+                    <div class="card-icon retiros">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="totalRetiros">$0.00</div>
+                <div class="card-desc">Total retirado hoy</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Invertido Hoy</div>
+                    <div class="card-icon inversion">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="totalInversion">$0.00</div>
+                <div class="card-desc">Total invertido hoy</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Fondo Disponible</div>
+                    <div class="card-icon fondo">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="fondoDisponible">$0.00</div>
+                <div class="card-desc">Fondo actual disponible</div>
+            </div>
+            
+            <div class="card owner">
+                <div class="card-header">
+                    <div class="card-title">Propietario</div>
+                    <div class="card-icon owner">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="propietario">$0.00</div>
+                <div class="card-desc">10% de los ingresos totales</div>
+            </div>
+            
+            <div class="card house">
+                <div class="card-header">
+                    <div class="card-title">Casa</div>
+                    <div class="card-icon house">
+                        <i class="fas fa-home"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="casa">$0.00</div>
+                <div class="card-desc">20% de los ingresos totales</div>
+            </div>
+            
+            <div class="card workshop">
+                <div class="card-header">
+                    <div class="card-title">Taller</div>
+                    <div class="card-icon workshop">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                </div>
+                <div class="card-value" id="taller">$0.00</div>
+                <div class="card-desc">30% de los ingresos totales</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-plus-circle"></i> Registrar Nuevos</h2>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="ingresos">Ingresos</button>
+            <button class="tab-btn" data-tab="retiros">Retiros</button>
+            <button class="tab-btn" data-tab="inversiones">Inversiones</button>
+        </div>
+        
+        <div class="tab-content active" id="ingresos">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="servicio">Servicio</label>
+                    <select id="servicio">
+                        <option value="">Seleccione un servicio</option>
+                        <option value="Cable">Cable</option>
+                        <option value="Cambio de Bocina">Cambio de Bocina</option>
+                        <option value="Cambio de Botones">Cambio de Botones</option>
+                        <option value="Cambio de Cámara">Cambio de Cámara</option>
+                        <option value="Decodificación">Decodificación</option>
+                        <option value="Defectación">Defectación</option>
+                        <option value="Factory-Reset">Factory-Reset</option>
+                        <option value="FRP">FRP</option>
+                        <option value="Instalación de Software">Instalación de Software</option>
+                        <option value="Mica">Mica</option>
+                        <option value="Micrófono">Micrófono</option>
+                        <option value="Montage De Pantalla">Montage De Pantalla</option>
+                        <option value="Pegado De Pantalla">Pegado De Pantalla</option>
+                        <option value="Puerto de carga">Puerto de carga</option>
+                        <option value="Reparación De IMEI">Reparación De IMEI</option>
+                        <option value="Reparación De Placa">Reparación De Placa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="precioServicio">Precio (CUP)</label>
+                    <input type="number" id="precioServicio" placeholder="Ingrese el precio" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fechaServicio">Fecha</label>
+                    <input type="date" id="fechaServicio">
+                </div>
+            </div>
+            <button class="btn-submit" id="addIngreso">
+                <i class="fas fa-save"></i> Registrar Ingreso
+            </button>
+        </div>
+        
+        <div class="tab-content" id="retiros">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="montoRetiro">Monto a Retirar (CUP)</label>
+                    <input type="number" id="montoRetiro" placeholder="Ingrese el monto" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fechaRetiro">Fecha</label>
+                    <input type="date" id="fechaRetiro">
+                </div>
+            </div>
+            <button class="btn-submit" id="addRetiro">
+                <i class="fas fa-save"></i> Registrar Retiro
+            </button>
+        </div>
+        
+        <div class="tab-content" id="inversiones">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="articulo">Artículo</label>
+                    <select id="articulo">
+                        <option value="">Seleccione un artículo</option>
+                        <option value="Cables">Cables</option>
+                        <option value="Mica">Mica</option>
+                        <option value="Pantalla">Pantalla</option>
+                        <option value="Pegamento">Pegamento</option>
+                        <option value="Puertos B">Puertos B</option>
+                        <option value="Puertos C">Puertos C</option>
+                        <option value="Teléfono">Teléfono</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" id="cantidad" placeholder="Ingrese la cantidad" min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="precioCompra">Precio de Compra (CUP)</label>
+                    <input type="number" id="precioCompra" placeholder="Ingrese el precio" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fechaInversion">Fecha</label>
+                    <input type="date" id="fechaInversion">
+                </div>
+            </div>
+            <button class="btn-submit" id="addInversion">
+                <i class="fas fa-save"></i> Registrar Inversión
+            </button>
+        </div>
+        
+        <footer>
+            <p>Tele-Like - Dashboard &copy; 2025</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notificationText">Operación realizada con éxito</span>
+    </div>
+
+    <script>
+        // Datos iniciales
+        let data = {
+            ingresos: [],
+            retiros: [],
+            inversiones: []
+        };
+
+        // Cargar datos desde localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('tallerData');
+            if (savedData) {
+                data = JSON.parse(savedData);
+                showNotification('Datos cargados correctamente');
+            } else {
+                showNotification('Bienvenido! Empieza a registrar tus operaciones');
+            }
+            updateUI();
+        }
+
+        // Guardar datos en localStorage
+        function saveData() {
+            localStorage.setItem('tallerData', JSON.stringify(data));
+            showNotification('Datos guardados correctamente');
+            updateUI();
+        }
+
+        // Mostrar notificación
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.remove('error');
+            
+            if (isError) {
+                notification.classList.add('error');
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Actualizar toda la UI
+        function updateUI() {
+            updateDashboard();
+        }
+
+        // Actualizar el dashboard
+        function updateDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Calcular totales para hoy
+            const totalIngresosHoy = data.ingresos
+                .filter(ing => ing.fecha === today)
+                .reduce((sum, ing) => sum + ing.precio, 0);
+                
+            const totalRetirosHoy = data.retiros
+                .filter(ret => ret.fecha === today)
+                .reduce((sum, ret) => sum + ret.monto, 0);
+                
+            const totalInversionHoy = data.inversiones
+                .filter(inv => inv.fecha === today)
+                .reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
+            
+            // Calcular totales generales
+            const totalIngresos = data.ingresos.reduce((sum, ing) => sum + ing.precio, 0);
+            const totalRetiros = data.retiros.reduce((sum, ret) => sum + ret.monto, 0);
+            const totalInversiones = data.inversiones.reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
+            
+            // Calcular distribución
+            const propietario = totalIngresos * 0.1;
+            const casa = totalIngresos * 0.2;
+            const taller = totalIngresos * 0.3;
+            const fondo = totalIngresos * 0.4;
+            
+            // Calcular fondo disponible
+            const fondoDisponible = fondo - totalRetiros - totalInversiones;
+            
+            // Actualizar UI
+            document.getElementById('totalIngresos').textContent = `$${totalIngresosHoy.toFixed(2)}`;
+            document.getElementById('totalRetiros').textContent = `$${totalRetirosHoy.toFixed(2)}`;
+            document.getElementById('totalInversion').textContent = `$${totalInversionHoy.toFixed(2)}`;
+            document.getElementById('fondoDisponible').textContent = `$${fondoDisponible.toFixed(2)}`;
+            document.getElementById('propietario').textContent = `$${propietario.toFixed(2)}`;
+            document.getElementById('casa').textContent = `$${casa.toFixed(2)}`;
+            document.getElementById('taller').textContent = `$${taller.toFixed(2)}`;
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            // Establecer fecha actual en campos de fecha
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaServicio').value = today;
+            document.getElementById('fechaRetiro').value = today;
+            document.getElementById('fechaInversion').value = today;
+            
+            // Mostrar fecha actual
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES', options);
+            
+            // Cargar datos
+            loadData();
+            
+            // Configurar botones de tabs
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remover clase active de todos los botones y contenidos
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    // Agregar clase active al botón clickeado
+                    button.classList.add('active');
+                    
+                    // Mostrar el contenido correspondiente
+                    const tabId = button.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Configurar botones de acciones
+            document.getElementById('addIngreso').addEventListener('click', () => {
+                const servicio = document.getElementById('servicio').value;
+                const precio = parseFloat(document.getElementById('precioServicio').value);
+                const fecha = document.getElementById('fechaServicio').value;
+                
+                if (!servicio || isNaN(precio) || precio <= 0) {
+                    showNotification('Por favor complete todos los campos del formulario', true);
+                    return;
+                }
+                
+                data.ingresos.push({
+                    servicio,
+                    precio,
+                    fecha
+                });
+                
+                saveData();
+                
+                // Limpiar formulario
+                document.getElementById('servicio').value = '';
+                document.getElementById('precioServicio').value = '';
+            });
+            
+            document.getElementById('addRetiro').addEventListener('click', () => {
+                const monto = parseFloat(document.getElementById('montoRetiro').value);
+                const fecha = document.getElementById('fechaRetiro').value;
+                
+                if (isNaN(monto) || monto <= 0) {
+                    showNotification('Por favor ingrese un monto válido', true);
+                    return;
+                }
+                
+                data.retiros.push({
+                    monto,
+                    fecha
+                });
+                
+                saveData();
+                
+                // Limpiar formulario
+                document.getElementById('montoRetiro').value = '';
+            });
+            
+            document.getElementById('addInversion').addEventListener('click', () => {
+                const articulo = document.getElementById('articulo').value;
+                const cantidad = parseInt(document.getElementById('cantidad').value);
+                const precioCompra = parseFloat(document.getElementById('precioCompra').value);
+                const fecha = document.getElementById('fechaInversion').value;
+                
+                if (!articulo || isNaN(cantidad) || cantidad <= 0 || isNaN(precioCompra) || precioCompra <= 0) {
+                    showNotification('Por favor complete todos los campos correctamente', true);
+                    return;
+                }
+                
+                data.inversiones.push({
+                    articulo,
+                    cantidad,
+                    precioCompra,
+                    fecha
+                });
+                
+                saveData();
+                
+                // Limpiar formulario
+                document.getElementById('articulo').value = '';
+                document.getElementById('cantidad').value = '';
+                document.getElementById('precioCompra').value = '';
+            });
+            
+            // Botón de reinicio
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                if (confirm('¿Está seguro de que desea reiniciar todos los datos?\nEsta acción no se puede deshacer.')) {
+                    localStorage.removeItem('tallerData');
+                    data = {
+                        ingresos: [],
+                        retiros: [],
+                        inversiones: []
+                    };
+                    updateUI();
+                    showNotification('Todos los datos han sido reiniciados correctamente');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Taller</title>
+    <title>TeleLike - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -181,19 +181,9 @@
             color: var(--success);
         }
         
-        .card-icon.retiros {
-            background: rgba(230, 57, 70, 0.2);
-            color: var(--danger);
-        }
-        
         .card-icon.inversion {
             background: rgba(247, 37, 133, 0.2);
             color: var(--warning);
-        }
-        
-        .card-icon.fondo {
-            background: rgba(67, 97, 238, 0.2);
-            color: var(--primary);
         }
         
         .card-icon.owner {
@@ -397,7 +387,7 @@
         <header>
             <div class="logo">
                 <i class="fas fa-tools"></i>
-                <h1>Tele-Like - Dashboard</h1>
+                <h1>TeleLike - Dashboard</h1>
             </div>
             <button class="reset-btn" id="resetBtn">
                 <i class="fas fa-redo"></i> Reiniciar Todo
@@ -422,17 +412,6 @@
             
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Total Hoy (Retiros)</div>
-                    <div class="card-icon retiros">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                </div>
-                <div class="card-value" id="totalRetiros">$0.00</div>
-                <div class="card-desc">Total retirado hoy</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
                     <div class="card-title">Invertido Hoy</div>
                     <div class="card-icon inversion">
                         <i class="fas fa-chart-line"></i>
@@ -442,55 +421,43 @@
                 <div class="card-desc">Total invertido hoy</div>
             </div>
             
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Fondo Disponible</div>
-                    <div class="card-icon fondo">
-                        <i class="fas fa-piggy-bank"></i>
-                    </div>
-                </div>
-                <div class="card-value" id="fondoDisponible">$0.00</div>
-                <div class="card-desc">Fondo actual disponible</div>
-            </div>
-            
             <div class="card owner">
                 <div class="card-header">
-                    <div class="card-title">Propietario</div>
+                    <div class="card-title">Propietario (40%)</div>
                     <div class="card-icon owner">
                         <i class="fas fa-user-tie"></i>
                     </div>
                 </div>
                 <div class="card-value" id="propietario">$0.00</div>
-                <div class="card-desc">10% de los ingresos totales</div>
+                <div class="card-desc">Porcentaje asignado al propietario</div>
             </div>
             
             <div class="card house">
                 <div class="card-header">
-                    <div class="card-title">Casa</div>
+                    <div class="card-title">Casa (30%)</div>
                     <div class="card-icon house">
                         <i class="fas fa-home"></i>
                     </div>
                 </div>
                 <div class="card-value" id="casa">$0.00</div>
-                <div class="card-desc">20% de los ingresos totales</div>
+                <div class="card-desc">Porcentaje asignado a la casa</div>
             </div>
             
             <div class="card workshop">
                 <div class="card-header">
-                    <div class="card-title">Taller</div>
+                    <div class="card-title">Taller (30%)</div>
                     <div class="card-icon workshop">
                         <i class="fas fa-tools"></i>
                     </div>
                 </div>
                 <div class="card-value" id="taller">$0.00</div>
-                <div class="card-desc">30% de los ingresos totales</div>
+                <div class="card-desc">Porcentaje asignado al taller</div>
             </div>
         </div>
         
         <h2 class="section-title"><i class="fas fa-plus-circle"></i> Registrar Nuevos</h2>
         <div class="tabs">
             <button class="tab-btn active" data-tab="ingresos">Ingresos</button>
-            <button class="tab-btn" data-tab="retiros">Retiros</button>
             <button class="tab-btn" data-tab="inversiones">Inversiones</button>
         </div>
         
@@ -534,23 +501,6 @@
             </button>
         </div>
         
-        <div class="tab-content" id="retiros">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="montoRetiro">Monto a Retirar (CUP)</label>
-                    <input type="number" id="montoRetiro" placeholder="Ingrese el monto" min="0" step="0.01">
-                </div>
-                
-                <div class="form-group">
-                    <label for="fechaRetiro">Fecha</label>
-                    <input type="date" id="fechaRetiro">
-                </div>
-            </div>
-            <button class="btn-submit" id="addRetiro">
-                <i class="fas fa-save"></i> Registrar Retiro
-            </button>
-        </div>
-        
         <div class="tab-content" id="inversiones">
             <div class="form-grid">
                 <div class="form-group">
@@ -588,7 +538,7 @@
         </div>
         
         <footer>
-            <p>Tele-Like - Dashboard &copy; 2025</p>
+            <p>TeleLike - Dashboard &copy; 2025</p>
         </footer>
     </div>
 
@@ -600,7 +550,6 @@
         // Datos iniciales
         let data = {
             ingresos: [],
-            retiros: [],
             inversiones: []
         };
 
@@ -639,7 +588,7 @@
             
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 3000);
+            }, 5000);
         }
 
         // Actualizar toda la UI
@@ -656,33 +605,18 @@
                 .filter(ing => ing.fecha === today)
                 .reduce((sum, ing) => sum + ing.precio, 0);
                 
-            const totalRetirosHoy = data.retiros
-                .filter(ret => ret.fecha === today)
-                .reduce((sum, ret) => sum + ret.monto, 0);
-                
             const totalInversionHoy = data.inversiones
                 .filter(inv => inv.fecha === today)
                 .reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
             
-            // Calcular totales generales
-            const totalIngresos = data.ingresos.reduce((sum, ing) => sum + ing.precio, 0);
-            const totalRetiros = data.retiros.reduce((sum, ret) => sum + ret.monto, 0);
-            const totalInversiones = data.inversiones.reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
-            
-            // Calcular distribución
-            const propietario = totalIngresos * 0.1;
-            const casa = totalIngresos * 0.2;
-            const taller = totalIngresos * 0.3;
-            const fondo = totalIngresos * 0.4;
-            
-            // Calcular fondo disponible
-            const fondoDisponible = fondo - totalRetiros - totalInversiones;
+            // Calcular distribución (40% propietario, 30% casa, 30% taller)
+            const propietario = totalIngresosHoy * 0.4;
+            const casa = totalIngresosHoy * 0.3;
+            const taller = totalIngresosHoy * 0.3;
             
             // Actualizar UI
             document.getElementById('totalIngresos').textContent = `$${totalIngresosHoy.toFixed(2)}`;
-            document.getElementById('totalRetiros').textContent = `$${totalRetirosHoy.toFixed(2)}`;
             document.getElementById('totalInversion').textContent = `$${totalInversionHoy.toFixed(2)}`;
-            document.getElementById('fondoDisponible').textContent = `$${fondoDisponible.toFixed(2)}`;
             document.getElementById('propietario').textContent = `$${propietario.toFixed(2)}`;
             document.getElementById('casa').textContent = `$${casa.toFixed(2)}`;
             document.getElementById('taller').textContent = `$${taller.toFixed(2)}`;
@@ -693,7 +627,6 @@
             // Establecer fecha actual en campos de fecha
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('fechaServicio').value = today;
-            document.getElementById('fechaRetiro').value = today;
             document.getElementById('fechaInversion').value = today;
             
             // Mostrar fecha actual
@@ -743,26 +676,6 @@
                 document.getElementById('precioServicio').value = '';
             });
             
-            document.getElementById('addRetiro').addEventListener('click', () => {
-                const monto = parseFloat(document.getElementById('montoRetiro').value);
-                const fecha = document.getElementById('fechaRetiro').value;
-                
-                if (isNaN(monto) || monto <= 0) {
-                    showNotification('Por favor ingrese un monto válido', true);
-                    return;
-                }
-                
-                data.retiros.push({
-                    monto,
-                    fecha
-                });
-                
-                saveData();
-                
-                // Limpiar formulario
-                document.getElementById('montoRetiro').value = '';
-            });
-            
             document.getElementById('addInversion').addEventListener('click', () => {
                 const articulo = document.getElementById('articulo').value;
                 const cantidad = parseInt(document.getElementById('cantidad').value);
@@ -795,7 +708,6 @@
                     localStorage.removeItem('tallerData');
                     data = {
                         ingresos: [],
-                        retiros: [],
                         inversiones: []
                     };
                     updateUI();

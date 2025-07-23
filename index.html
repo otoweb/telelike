@@ -598,29 +598,40 @@
 
         // Actualizar el dashboard
         function updateDashboard() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            // Calcular totales para hoy
-            const totalIngresosHoy = data.ingresos
-                .filter(ing => ing.fecha === today)
-                .reduce((sum, ing) => sum + ing.precio, 0);
-                
-            const totalInversionHoy = data.inversiones
-                .filter(inv => inv.fecha === today)
-                .reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
-            
-            // Calcular distribución (40% propietario, 30% casa, 30% taller)
-            const propietario = totalIngresosHoy * 0.4;
-            const casa = totalIngresosHoy * 0.3;
-            const taller = totalIngresosHoy * 0.3;
-            
-            // Actualizar UI
-            document.getElementById('totalIngresos').textContent = `$${totalIngresosHoy.toFixed(2)}`;
-            document.getElementById('totalInversion').textContent = `$${totalInversionHoy.toFixed(2)}`;
-            document.getElementById('propietario').textContent = `$${propietario.toFixed(2)}`;
-            document.getElementById('casa').textContent = `$${casa.toFixed(2)}`;
-            document.getElementById('taller').textContent = `$${taller.toFixed(2)}`;
-        }
+    const today = new Date().toISOString().split('T')[0];
+
+    // Calcular totales para hoy
+    const totalIngresosHoy = data.ingresos
+        .filter(ing => ing.fecha === today)
+        .reduce((sum, ing) => sum + ing.precio, 0);
+        
+    const totalInversionHoy = data.inversiones
+        .filter(inv => inv.fecha === today)
+        .reduce((sum, inv) => sum + (inv.cantidad * inv.precioCompra), 0);
+    
+    const propietario = totalIngresosHoy * 0.4;
+    const casa = totalIngresosHoy * 0.3;
+    const taller = totalIngresosHoy * 0.3;
+
+    // Verificar si inversión ha sido recuperada
+    if (totalInversionHoy > 0 && taller >= totalInversionHoy) {
+        // Eliminar solo las inversiones de hoy
+        data.inversiones = data.inversiones.filter(inv => inv.fecha !== today);
+
+        // Guardar y notificar
+        saveData();
+        showNotification('La inversión ha sido recuperada y reiniciada');
+        return; // evitar mostrar números viejos tras limpieza
+    }
+
+    // Actualizar UI
+    document.getElementById('totalIngresos').textContent = `$${totalIngresosHoy.toFixed(2)}`;
+    document.getElementById('totalInversion').textContent = `$${totalInversionHoy.toFixed(2)}`;
+    document.getElementById('propietario').textContent = `$${propietario.toFixed(2)}`;
+    document.getElementById('casa').textContent = `$${casa.toFixed(2)}`;
+    document.getElementById('taller').textContent = `$${taller.toFixed(2)}`;
+}
+
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', () => {

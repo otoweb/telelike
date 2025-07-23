@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TeleLike - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary: #061d85;
@@ -330,7 +331,7 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
-            width: 100%;
+            width: 25%;
             margin-top: 10px;
         }
         
@@ -406,8 +407,7 @@
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                 </div>
-                <div class="card-value" id="totalIngresos">$0.00</div>
-                <div class="card-desc">Suma de todos los ingresos del día</div>
+                <div class="card-value" id="totalIngresos">$0.00</div>                
             </div>
             
             <div class="card">
@@ -418,44 +418,40 @@
                     </div>
                 </div>
                 <div class="card-value" id="totalInversion">$0.00</div>
-                <div class="card-desc">Total invertido hoy</div>
             </div>
             
             <div class="card owner">
                 <div class="card-header">
-                    <div class="card-title">Propietario (40%)</div>
+                    <div class="card-title">Propietario</div>
                     <div class="card-icon owner">
                         <i class="fas fa-user-tie"></i>
                     </div>
                 </div>
                 <div class="card-value" id="propietario">$0.00</div>
-                <div class="card-desc">Porcentaje asignado al propietario</div>
             </div>
             
             <div class="card house">
                 <div class="card-header">
-                    <div class="card-title">Casa (30%)</div>
+                    <div class="card-title">Casa</div>
                     <div class="card-icon house">
                         <i class="fas fa-home"></i>
                     </div>
                 </div>
                 <div class="card-value" id="casa">$0.00</div>
-                <div class="card-desc">Porcentaje asignado a la casa</div>
             </div>
             
             <div class="card workshop">
                 <div class="card-header">
-                    <div class="card-title">Taller (30%)</div>
+                    <div class="card-title">Taller</div>
                     <div class="card-icon workshop">
                         <i class="fas fa-tools"></i>
                     </div>
                 </div>
                 <div class="card-value" id="taller">$0.00</div>
-                <div class="card-desc">Porcentaje asignado al taller</div>
             </div>
         </div>
         
-        <h2 class="section-title"><i class="fas fa-plus-circle"></i> Registrar Nuevos</h2>
+        <h2 class="section-title"><i class="fas fa-plus-circle"></i> Registrar</h2>
         <div class="tabs">
             <button class="tab-btn active" data-tab="ingresos">Ingresos</button>
             <button class="tab-btn" data-tab="inversiones">Inversiones</button>
@@ -483,6 +479,7 @@
                         <option value="Puerto de carga">Puerto de carga</option>
                         <option value="Reparación De IMEI">Reparación De IMEI</option>
                         <option value="Reparación De Placa">Reparación De Placa</option>
+                        <option value="Telefono Vendido">Telefono Vendido</option>
                     </select>
                 </div>
                 
